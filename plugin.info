@@ -1,0 +1,5 @@
+description: This plugin adds seeding view to the main menu
+author: _rMX_
+version: 0.1
+runlevel: 11
+need_rtorrent: 0
