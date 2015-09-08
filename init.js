@@ -1,35 +1,46 @@
-plugin.loadMainCSS();
+(function () {
+	plugin.loadMainCSS();
 
-theWebUI.labels["-_-_-see-_-_-"] = 0;
+	var seedingLabelName = '-_-_-see-_-_-',
+		completeLabelName = '-_-_-com-_-_-';
 
-plugin.markLoaded();
+	theWebUI.labels[seedingLabelName] = 0;
 
-plugin.loadLabels = theWebUI.loadLabels;
-theWebUI.loadLabels = function () {
-	if ($('#-_-_-see-_-_-').length === 0) {
-		var li = $('<li />', {
-			id: '-_-_-see-_-_-',
-			html: theUILang.Seeding + ' (<span id="-_-_-see-_-_-c">0</span>)'
-		});
-		li.addClass('cat').mouseclick(theWebUI.labelContextMenu);
-		$('#pstate_cont').append(li);
-	}
+	plugin.markLoaded();
 
-	return plugin.loadLabels.apply(theWebUI, arguments);
-};
-
-plugin.getLabels = theWebUI.getLabels;
-theWebUI.getLabels = function (id, torrent) {
-	var lbl = plugin.getLabels.call(theWebUI, id, torrent);
-
-	if (torrent.status == theUILang.Seeding) {
-		lbl += "-_-_-see-_-_-";
-		lbl = lbl.replace('-_-_-com-_-_-', '');
-		this.labels["-_-_-com-_-_-"]--;
-		if (this.labels[id].indexOf("-_-_-see-_-_-") == -1) {
-			this.labels["-_-_-see-_-_-"]++;
+	plugin.loadLabels = theWebUI.loadLabels;
+	theWebUI.loadLabels = function () {
+		if ($('#' + seedingLabelName).length === 0) {
+			var li = $('<li />', {
+				id: seedingLabelName,
+				html: theUILang.Seeding + ' (<span id="' + seedingLabelName + 'c">0</span>)'
+			});
+			li.addClass('cat').mouseclick(theWebUI.labelContextMenu);
+			$('#pstate_cont').append(li);
 		}
-	}
 
-	return lbl;
-};
+		return plugin.loadLabels.apply(theWebUI, arguments);
+	};
+
+	plugin.getLabels = theWebUI.getLabels;
+	theWebUI.getLabels = function (id, torrent) {
+		var lbl = plugin.getLabels.call(theWebUI, id, torrent);
+
+		if (torrent.status == theUILang.Seeding) {
+			lbl += seedingLabelName;
+			lbl = lbl.replace(completeLabelName, '');
+			this.labels[completeLabelName]--;
+			if (this.labels[id].indexOf(seedingLabelName) == -1) {
+				this.labels[seedingLabelName]++;
+			}
+		}
+		else {
+			if (this.labels[id].indexOf(seedingLabelName) > -1) {
+				lbl = lbl.replace(seedingLabelName, '');
+				this.labels[seedingLabelName]--;
+			}
+		}
+
+		return lbl;
+	};
+}) ();
